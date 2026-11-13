@@ -7,6 +7,8 @@
 cbuffer CBParam : register(b0)
 {
     float4 baseColor;
+    float waveHeight;
+    float3 padding;
 };
 
 // ----------------------------------------------------------
@@ -58,7 +60,7 @@ PSInput VS(VSInput vin)
     float4 worldPos = p;
 
     float l = length(worldPos.xz);
-    worldPos.y += sin(l * -0.5 + time.x);
+    worldPos.y += sin(l * -0.5 * waveHeight + time.x);
 
     p = mul(worldPos, view);
     p = mul(p, projection);
@@ -66,7 +68,7 @@ PSInput VS(VSInput vin)
     Out.pos = p;
     
     float c = worldPos.y * 0.2 + 0.5;
-    Out.color = baseColor * float4(c, c, c, 1);
+    Out.color = baseColor * float4(c * padding.x, c * padding.y, c * padding.z, 1);
 
     return Out;
 }

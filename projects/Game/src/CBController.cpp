@@ -1,4 +1,4 @@
-﻿#include "CBController.h"
+#include "CBController.h"
 
 #include <UniDx/D3DManager.h>
 #include <UniDx/Input.h>
@@ -12,6 +12,8 @@ namespace
     struct CBParam // register(b0)
     {
         Color baseColor;
+		float waveHeight;
+		float padding[3];
     };
     constexpr int CBSlot = 0;
 
@@ -49,11 +51,34 @@ void CBController::Update()
         colorIndex = (colorIndex + 1) % tableSize;
     }
 
+	if (Input::GetKeyDown(Keyboard::Up))
+	{
+		waveHeight += 0.1f;
+	}
+	if (Input::GetKeyDown(Keyboard::R))
+	{
+		padding[0] += 0.1f;
+		if (padding[0] > 1.0f) padding[0] = 0.0f;
+	}
+	if (Input::GetKeyDown(Keyboard::G))
+	{
+		padding[1] += 0.1f;
+        if (padding[1] > 1.0f) padding[1] = 0.0f;
+	}
+	if (Input::GetKeyDown(Keyboard::B))
+	{
+		padding[2] += 0.1f;
+        if (padding[2] > 1.0f) padding[2] = 0.0f;
+	}
 
     CBParam cb;
 
     // カラーテーブルから現在のインデクスの色を設定
     cb.baseColor = colorTable[colorIndex];
+	cb.waveHeight = waveHeight;
+    for (int i = 0; i < std::size(padding); ++i) {
+		cb.padding[i] = padding[i];
+    }
 
     // 定数バッファを更新
     D3DManager::getInstance()->GetContext()->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &cb, 0, 0);

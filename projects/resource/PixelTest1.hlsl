@@ -76,7 +76,9 @@ float4 PS(PSInput In) : SV_Target0
 
     // ライトループ
     float4 diffAccum = ambientColor; // 環境光
-
+    float NdotL = dot(N, -directionW);
+    diffAccum += directionalColor * NdotL;
+    
     // カラー合成
     float4 color = float4(diffAccum.rgb, 1) * baseColor;
 
